@@ -128,63 +128,56 @@ export default function WalletConnect({ onWalletConnected, onClose, open }: Wall
     }
     setSimulatedAddress(addr);
 
-    // 🌟 ACTIVE RUNTIME DETECTOR: Try to connect to real browser extensions if present!
-    if (typeof window !== 'undefined') {
+    // Check if real wallet extension is available
+    const getWalletProvider = () => {
+      if (typeof window === 'undefined') return null;
+      
+      switch (wallet.id) {
+        case 'petra':
+          return (window as any).aptos || (window as any).petra;
+        case 'martian':
+          return (window as any).martian;
+        case 'pontem':
+          return (window as any).pontem;
+        case 'fewcha':
+          return (window as any).fewcha;
+        default:
+          return null;
+      }
+    };
+
+    const walletProvider = getWalletProvider();
+    
+    // If real wallet extension is detected, try to connect to it
+    if (walletProvider) {
+      console.log(`[v0] Real ${wallet.name} extension detected! Attempting connection...`);
       try {
-        if (wallet.id === 'petra') {
-          const petraObj = (window as any).aptos || (window as any).petra;
-          if (petraObj) {
-            console.log("Real Petra extension found! Injecting connection interface...");
-            const response = await petraObj.connect();
-            const account = await petraObj.account();
-            const realAddr = response?.address || account?.address;
-            if (realAddr) {
-              onWalletConnected({ ...wallet, connected: true, address: realAddr }, realAddr);
-              onClose();
-              return;
-            }
-          }
-        } else if (wallet.id === 'martian') {
-          const martianObj = (window as any).martian;
-          if (martianObj) {
-            console.log("Real Martian extension found! Triggering interface...");
-            const response = await martianObj.connect();
-            const realAddr = response?.address;
-            if (realAddr) {
-              onWalletConnected({ ...wallet, connected: true, address: realAddr }, realAddr);
-              onClose();
-              return;
-            }
-          }
-        } else if (wallet.id === 'pontem') {
-          const pontemObj = (window as any).pontem;
-          if (pontemObj) {
-            const response = await pontemObj.connect();
-            const realAddr = response?.address;
-            if (realAddr) {
-              onWalletConnected({ ...wallet, connected: true, address: realAddr }, realAddr);
-              onClose();
-              return;
-            }
-          }
-        } else if (wallet.id === 'fewcha') {
-          const fewchaObj = (window as any).fewcha;
-          if (fewchaObj) {
-            const response = await fewchaObj.connect();
-            const realAddr = response?.address;
-            if (realAddr) {
-              onWalletConnected({ ...wallet, connected: true, address: realAddr }, realAddr);
-              onClose();
-              return;
-            }
-          }
+        const response = await walletProvider.connect();
+        let realAddr = response?.address;
+        
+        // For Petra, also try getting account if address not in response
+        if (!realAddr && wallet.id === 'petra' && walletProvider.account) {
+          const account = await walletProvider.account();
+          realAddr = account?.address;
+        }
+        
+        if (realAddr) {
+          console.log(`[v0] Successfully connected to real ${wallet.name}: ${realAddr}`);
+          onWalletConnected({ ...wallet, connected: true, address: realAddr }, realAddr);
+          onClose();
+          return;
         }
       } catch (err: any) {
-        console.warn("Real browser extension connection declined or blocked by Sandbox constraints. Falling back to high-fidelity simulated popup layout.", err);
+        // User rejected or extension error - show error and stay on selection
+        console.warn(`[v0] ${wallet.name} connection rejected or failed:`, err?.message || err);
+        setErrorText(`Connection rejected. Please try again or use the simulator.`);
+        // Don't auto-fall back to emulator - let user decide
+        return;
       }
     }
 
-    // Fall back to showing high-fidelity floating simulator window
+    // No real extension found - show the simulated wallet emulator
+    console.log(`[v0] No real ${wallet.name} extension found. Starting simulator...`);
     setShowEmulator(true);
     setEmulatorPhase('unlock');
     setPassword(''); // Force user or bypass password
