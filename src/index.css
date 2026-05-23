@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Space Grotesk", ui-sans-serif, system-ui;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-shelby-dark: #0A0B0F;
+  --color-shelby-blue: #4F8CFF;
+  --color-shelby-purple: #8B5CF6;
+  --color-shelby-cyan: #22D3EE;
+  --color-shelby-gray: #161922;
+  --color-shelby-glass: rgba(16, 18, 27, 0.75);
+}
+
+/* Base custom styles to reinforce Apple VisionOS glassmorphism */
+body {
+  background-color: #0A0B0F;
+  color: #F3F4F6;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.glass-panel {
+  background: rgba(10, 11, 15, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(16, 19, 27, 0.85);
+  border-color: rgba(79, 140, 255, 0.3);
+  box-shadow: 0 0 30px rgba(79, 140, 255, 0.05);
+}
+
+.glow-blue {
+  box-shadow: 0 0 25px rgba(79, 140, 255, 0.15);
+}
+
+.glow-purple {
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
+}
+
+/* Animated orb */
+@keyframes orb-glowing {
+  0%, 100% {
+    transform: scale(1) translate(0px, 0px);
+    filter: blur(35px) brightness(1);
+  }
+  33% {
+    transform: scale(1.1) translate(10px, -15px);
+    filter: blur(40px) brightness(1.2);
+  }
+  66% {
+    transform: scale(0.9) translate(-10px, 15px);
+    filter: blur(35px) brightness(0.9);
+  }
+}
+
+.ai-orb-primary {
+  animation: orb-glowing 8s ease-in-out infinite;
+}
+
+.ai-orb-secondary {
+  animation: orb-glowing 11s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+/* Radial line mesh */
+.radial-grid {
+  background-image: radial-gradient(rgba(79, 140, 255, 0.15) 1px, transparent 0);
+  background-size: 24px 24px;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ShelbyONE",
+  "description": "Futuristic AI-native decentralized cloud storage operating system built on the Aptos ecosystem.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
