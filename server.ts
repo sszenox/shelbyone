@@ -213,7 +213,10 @@ How would you like to configure your Shelby Decentralized storage core today?`;
   } else {
     // Vite middleware for real-time development
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { 
+        middlewareMode: true,
+        hmr: false, // Disable HMR WebSocket in middleware mode to avoid connection errors
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
