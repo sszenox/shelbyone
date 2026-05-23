@@ -217,6 +217,19 @@ How would you like to configure your Shelby Decentralized storage core today?`;
       appType: 'spa',
     });
     app.use(vite.middlewares);
+
+    // SPA fallback - serve index.html for all non-API routes in development
+    app.get('*', async (req, res, next) => {
+      try {
+        const fs = await import('fs');
+        const url = req.originalUrl;
+        let html = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8');
+        html = await vite.transformIndexHtml(url, html);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+      } catch (e) {
+        next(e);
+      }
+    });
   }
 
   app.listen(PORT, HOST, () => {
