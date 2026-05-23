@@ -6,8 +6,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Port & Host constraints: Bind to port 3000 and host 0.0.0.0
-const PORT = 3000;
+// Port & Host constraints: Use PORT from environment or fallback to 3001
+const PORT = parseInt(process.env.PORT || '3001', 10);
 const HOST = '0.0.0.0';
 
 async function startServer() {
@@ -219,8 +219,8 @@ How would you like to configure your Shelby Decentralized storage core today?`;
     app.use(vite.middlewares);
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[ShelbyONE Server] bootstrapped safely at http://localhost:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`[ShelbyONE Server] bootstrapped safely at http://${HOST}:${PORT}`);
   });
 }
 
