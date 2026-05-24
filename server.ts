@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Port & Host constraints: Bind to port 3000 and host 0.0.0.0
-const PORT = 3000;
+const PORT = 3001;
 const HOST = '0.0.0.0';
 
 async function startServer() {
